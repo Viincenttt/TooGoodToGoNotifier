@@ -1,11 +1,10 @@
 from http import HTTPStatus
 import json
 from typing import Any, Dict
-
 import requests
-from api.errors import TgtgAPIError
 
-from api.models import AuthenticateByEmailResponse
+from api.errors import TgtgAPIError
+from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse
 
 class ApiClient:
     BASE_URI = "https://apptoogoodtogo.com/api"
@@ -26,10 +25,9 @@ class ApiClient:
         }
 
         response = self._post(uri, body)
-        print(response)
-        return AuthenticateByEmailResponse(**response)
+        return AuthenticateByEmailResponse(response["polling_id"])
 
-    def authenticate_by_polling_id(self, email: str, polling_id: str):
+    def authenticate_by_polling_id(self, email: str, polling_id: str) -> AuthenticateByPollingIdResponse:
         uri = f"{self.BASE_URI}/auth/v3/authByRequestPollingId"
         body = {
             "device_type": "ANDROID",
@@ -38,6 +36,7 @@ class ApiClient:
         }
 
         response = self._post(uri, body)
+        return AuthenticateByPollingIdResponse(response["access_token"], response["refresh_token"])
 
     def _post(self, uri: str, body: Dict) -> Any:
         response = requests.post(uri, json.dumps(body), headers=self._headers)
