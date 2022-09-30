@@ -127,6 +127,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+authentication_cache.ini
 
 # Spyder project settings
 .spyderproject
