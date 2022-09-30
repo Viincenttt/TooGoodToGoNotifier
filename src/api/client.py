@@ -13,32 +13,37 @@ class ApiClient:
     def __init__(self):
         logging.getLogger("urllib3").setLevel(logging.WARNING)
 
+        self.session = requests.Session()
+
         self._headers = {
-            "user-agent": "TGTG/{} Dalvik/2.1.0 (Linux; U; Android 10; SM-G935F Build/NRD90M)",
+            "user-agent": "TGTG/22.9.10 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N",
             "accept-language": "en-UK",
-            "Accept-Encoding": "gzip",
-            "Content-Type": "application/json; charset=utf8"
+            "Accept-Encoding": "gzip"
         }
 
-    def get_favorites_basket(self, access_token: str, user_id: str):
+    def get_favorites_basket(self, access_token: str, user_id: int):
         uri = f"{self.BASE_URI}/item/v7/"
         body = {
             "user_id": user_id,
-            "origin": {
-                "latitude": 0,
-                "longitude": 0
-            },
+            "origin": {"longitude": 0.0, "latitude": 0.0},
             "radius": 1,
-            "page": 1,
-            "page_size": 100,
+            "page_size": 400,
+            "page": 1,            
+            "discover": False,
             "favorites_only": True,
-            "with_stock_only": True
+            "item_categories": [],
+            "diet_categories": [],
+            "pickup_earliest": None,
+            "pickup_latest": None,
+            "search_phrase": None,
+            "with_stock_only": False,
+            "hidden_only": False,
+            "we_care_only": False,
         }
         headers = {
             "Authorization": f"Bearer {access_token}"
         }
-        headers.update(self._headers)
-        response = self._post(uri, body)
+        response = self._post(uri, body, headers)
         return response
 
     def authenticate_by_email(self, email: str) -> AuthenticateByEmailResponse:
@@ -82,9 +87,17 @@ class ApiClient:
             response["access_token_ttl_seconds"]
         )
 
-    def _post(self, uri: str, body: dict[str, str]) -> Any:
-        logging.debug(f"Sending request to Uri={uri} Body={body} Method=POST")
-        response = requests.post(uri, json.dumps(body), headers=self._headers)
+    def _post(self, uri: str, body: dict[str, Any], headers: Dict[str, str] = None) -> Any:
+        if (headers is not None):
+            headers.update(self._headers)
+        else:
+            headers = self._headers
+
+        self.session.headers = headers
+        jsonBody = json.dumps(body)
+        logging.debug(f"Sending request to Uri={uri} Body={jsonBody} Method=POST")        
+        response = self.session.post(uri, json=body)
+        print(response.request.headers)
         logging.debug(f"Received response from Uri={uri} Response={response.content} Method=POST")
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.ACCEPTED):
