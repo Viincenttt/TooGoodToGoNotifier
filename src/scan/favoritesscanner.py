@@ -7,9 +7,9 @@ from api.models import GetFavoritesBasketItemResponse
 from authentication.authenticator import Authenticator
 
 class FavoritesScanner:
-    def __init__(self, email: str, client: ApiClient) -> None:
+    def __init__(self, email: str) -> None:
         self.email = email
-        self.client = client
+        self.client = ApiClient()
         self.authenticator = Authenticator(self.client)
         self.previous_favorites_scan_result = {}
 

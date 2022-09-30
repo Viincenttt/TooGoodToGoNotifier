@@ -11,8 +11,7 @@ def main():
     logging_level = getattr(logging, app_config.logging_level.upper(), None)
     logging.basicConfig(level=logging_level)
     
-    client = ApiClient()
-    scanner = FavoritesScanner(app_config.email, client)
+    scanner = FavoritesScanner(app_config.email)
     scanner.scan_continuously()
 
 if __name__ == '__main__':
