@@ -31,12 +31,13 @@ class Authenticator:
 
         # TODO: Cache access_token in file / settings, so we can load it in app startup
 
-        login_result = self.login(email)
+        login_result = self.__login(email)
         self.access_token = login_result.access_token
         self.refresh_token = login_result.refresh_token
         self.access_token_valid_until = datetime.now() + timedelta(seconds=login_result.access_token_ttl_seconds)
+        return self.access_token
 
-    def login(self, email: str):
+    def __login(self, email: str):
         polling_id = self.__get_polling_id(email)
 
         for _ in range(self.max_polling_tries):

@@ -10,9 +10,9 @@ def main():
 
     client = ApiClient()
     authenticator = Authenticator(client)
-    result = authenticator.login(app_config.email)
+    result = authenticator.get_access_token(app_config.email)
     
-    print(result.access_token)
+    print(result)
     #polling_id = 'y'
     #polling_result = client.authenticate_by_polling_id('x', polling_id)
     #print(polling_result.access_token)
