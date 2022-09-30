@@ -1,0 +1,2 @@
+class TooGoodToGoLoginPollingError(Exception):
+    pass
