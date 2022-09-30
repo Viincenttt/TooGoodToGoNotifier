@@ -1,5 +1,2 @@
-class Error(Exception):
-    pass
-
-class TgtgAPIError(Error):
+class TooGoodToGoApiError(Exception):
     pass

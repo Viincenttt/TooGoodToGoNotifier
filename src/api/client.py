@@ -3,7 +3,7 @@ import json
 from typing import Any, Dict
 import requests
 
-from api.errors import TgtgAPIError
+from api.errors import TooGoodToGoApiError
 from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse
 
 class ApiClient:
@@ -46,7 +46,7 @@ class ApiClient:
                 result = response.json()
                 return result
             except ValueError as err:
-                raise TgtgAPIError(response.status_code, response.content)
+                raise TooGoodToGoApiError(response.status_code, response.content)
         
-        raise TgtgAPIError(response.status_code, response.content)
+        raise TooGoodToGoApiError(response.status_code, response.content)
 
