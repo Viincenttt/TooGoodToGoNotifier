@@ -8,3 +8,4 @@ class AppConfiguration:
         }
 
         self.email = config['EMAIL']
+        self.logging_level = config['LOGGING_LEVEL']
