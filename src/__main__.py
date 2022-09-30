@@ -4,18 +4,16 @@ from authentication.authenticator import Authenticator
 from config import AppConfiguration
 import logging
 
+from scan.favoritesscanner import FavoritesScanner
+
 def main():
     logging.basicConfig(level=logging.DEBUG)
     app_config = AppConfiguration()
 
     client = ApiClient()
     authenticator = Authenticator(client)
-    result = authenticator.get_access_token(app_config.email)
-    
-    print(result)
-    #polling_id = 'y'
-    #polling_result = client.authenticate_by_polling_id('x', polling_id)
-    #print(polling_result.access_token)
+    scanner = FavoritesScanner(app_config.email, client)
+    scanner.scan()
 
 if __name__ == '__main__':
     main()

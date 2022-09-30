@@ -1,11 +1,11 @@
 from http import HTTPStatus
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 import requests
 import logging
 
 from api.errors import TooGoodToGoApiError, TooGoodToGoRateLimitError
-from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse, RefreshAccessTokenResponse
+from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse, GetFavoritesBasketItemResponse, RefreshAccessTokenResponse
 
 class ApiClient:
     BASE_URI = "https://apptoogoodtogo.com/api"
@@ -21,7 +21,7 @@ class ApiClient:
             "Accept-Encoding": "gzip"
         }
 
-    def get_favorites_basket(self, access_token: str, user_id: int):
+    def get_favorites_basket(self, access_token: str, user_id: int) -> List[GetFavoritesBasketItemResponse]:
         uri = f"{self.BASE_URI}/item/v7/"
         body = {
             "user_id": user_id,
@@ -44,7 +44,17 @@ class ApiClient:
             "Authorization": f"Bearer {access_token}"
         }
         response = self._post(uri, body, headers)
-        return response
+
+        result = []
+        for item in response["items"]:
+            itemResponse = GetFavoritesBasketItemResponse(
+                item["item"]["item_id"],
+                item["display_name"],
+                item["items_available"]
+            )
+            result.append(itemResponse)
+
+        return result        
 
     def authenticate_by_email(self, email: str) -> AuthenticateByEmailResponse:
         uri = f"{self.BASE_URI}/auth/v3/authByEmail"
@@ -97,7 +107,6 @@ class ApiClient:
         jsonBody = json.dumps(body)
         logging.debug(f"Sending request to Uri={uri} Body={jsonBody} Method=POST")        
         response = self.session.post(uri, json=body)
-        print(response.request.headers)
         logging.debug(f"Received response from Uri={uri} Response={response.content} Method=POST")
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.ACCEPTED):
