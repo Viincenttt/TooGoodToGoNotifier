@@ -1,8 +1,6 @@
 import unittest
-from unittest.mock import MagicMock, Mock, patch
-from api.client import ApiClient
+from unittest.mock import Mock
 from api.models import GetFavoritesBasketItemResponse
-from authentication.authenticator import Authenticator
 
 from scan.favoritesscanner import FavoritesScanner
 
