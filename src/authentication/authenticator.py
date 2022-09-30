@@ -26,7 +26,7 @@ class Authenticator:
         self.config = configparser.ConfigParser()
         self.config.read(self.CONFIG_FILE_NAME)
 
-        self.access_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN, fallback=None)
+        self.access_token = None
         self.refresh_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_REFRESH_TOKEN, fallback=None)
         
         user_id = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, fallback=None)
@@ -49,6 +49,16 @@ class Authenticator:
                 )
 
             return self.access_token        
+
+        if self.refresh_token is not None:
+            refresh_token_result = self.client.refresh_access_token(self.refresh_token)
+            self.__set_authentication_tokens(
+                refresh_token_result.access_token, 
+                refresh_token_result.refresh_token, 
+                refresh_token_result.access_token_ttl_seconds,
+                self.user_id
+            )
+            return self.access_token
 
         login_result = self.__login(email)
         self.__set_authentication_tokens(
@@ -108,6 +118,6 @@ class Authenticator:
             self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN, access_token)
             self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_REFRESH_TOKEN, refresh_token)
             self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN_VALID_UNTIL, access_token_valid_until.isoformat())
-            self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, user_id)
+            self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, str(user_id))
 
             self.config.write(configfile)
