@@ -16,7 +16,7 @@ class FavoritesScanner:
         self.time_between_scanning_in_seconds_from = 60
         self.time_between_scanning_in_seconds_to = 300
 
-    def scan(self) -> None:
+    def scan_continuously(self) -> None:
         while (True):
             self.scan_favorites()
 
@@ -25,17 +25,20 @@ class FavoritesScanner:
             time.sleep(time_to_sleep)
 
     def scan_favorites(self) -> None:
-        access_token = self.authenticator.get_access_token(self.email)
-        user_id = self.authenticator.user_id
+        try:
+            access_token = self.authenticator.get_access_token(self.email)
+            user_id = self.authenticator.user_id
 
-        items = self.client.get_favorites_basket(access_token, user_id)
-        for item in items:
-            logging.info(f'Favorite item status: Store={item.display_name} Items Available={item.items_available}')
+            items = self.client.get_favorites_basket(access_token, user_id)
+            for item in items:
+                logging.info(f'Favorite item status: Store={item.display_name} Items Available={item.items_available}')
 
-            if self.__is_item_newly_available(item):
-                self.__notify_new_item_available(item)
+                if self.__is_item_newly_available(item):
+                    self.__notify_new_item_available(item)
 
-            self.previous_favorites_scan_result[item.item_id] = item.items_available
+                self.previous_favorites_scan_result[item.item_id] = item.items_available
+        except Exception as err:
+            logging.exception(err, exc_info=True)
 
     def __is_item_newly_available(self, item: GetFavoritesBasketItemResponse) -> bool:
         if item.items_available == 0:

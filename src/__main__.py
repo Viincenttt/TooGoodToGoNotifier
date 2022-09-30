@@ -11,9 +11,8 @@ def main():
     app_config = AppConfiguration()
 
     client = ApiClient()
-    authenticator = Authenticator(client)
     scanner = FavoritesScanner(app_config.email, client)
-    scanner.scan()
+    scanner.scan_continuously()
 
 if __name__ == '__main__':
     main()
