@@ -5,13 +5,31 @@ from api.errors import TooGoodToGoApiError
 from authentication.errors import TooGoodToGoLoginPollingError
 import time
 import logging
+from datetime import datetime, timedelta
 
 class Authenticator:
     def __init__(self, client: ApiClient):
         self.client = client
+
         self.max_polling_tries = 10
         self.time_between_polling_in_seconds_from = 10
         self.time_between_polling_in_seconds_to = 30
+
+        self.access_token = None
+        self.refresh_token = None
+        self.access_token_valid_until = None   
+
+    def get_access_token(self, email: str):
+        if self.access_token is not None:            
+            return self.access_token        
+
+        # TODO: Refresh token if access token is expired
+        # TODO: Cache access_token in file / settings, so we can load it in app startup
+
+        login_result = self.login(email)
+        self.access_token = login_result.access_token
+        self.refresh_token = login_result.refresh_token
+        self.access_token_valid_until = datetime.now() + timedelta(seconds=login_result.access_token_ttl_seconds)
 
     def login(self, email: str):
         polling_id = self.__get_polling_id(email)
