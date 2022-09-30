@@ -2,6 +2,7 @@ from http import HTTPStatus
 import json
 from typing import Any, Dict
 import requests
+import logging
 
 from api.errors import TooGoodToGoApiError
 from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse
@@ -10,6 +11,8 @@ class ApiClient:
     BASE_URI = "https://apptoogoodtogo.com/api"
 
     def __init__(self):
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+
         self._headers = {
             "user-agent": "TGTG/{} Dalvik/2.1.0 (Linux; U; Android 10; SM-G935F Build/NRD90M)",
             "accept-language": "en-UK",
@@ -25,7 +28,9 @@ class ApiClient:
         }
 
         response = self._post(uri, body)
-        return AuthenticateByEmailResponse(response["polling_id"])
+        return AuthenticateByEmailResponse(
+            response["polling_id"]
+        )
 
     def authenticate_by_polling_id(self, email: str, polling_id: str) -> AuthenticateByPollingIdResponse:
         uri = f"{self.BASE_URI}/auth/v3/authByRequestPollingId"
@@ -36,10 +41,16 @@ class ApiClient:
         }
 
         response = self._post(uri, body)
-        return AuthenticateByPollingIdResponse(response["access_token"], response["refresh_token"])
+        return AuthenticateByPollingIdResponse(
+            response["access_token"], 
+            response["refresh_token"],
+            response["access_token_ttl_seconds"]
+        )
 
-    def _post(self, uri: str, body: Dict) -> Any:
+    def _post(self, uri: str, body: dict[str, str]) -> Any:
+        logging.debug(f"Sending request to Uri={uri} Body={body} Method=POST")
         response = requests.post(uri, json.dumps(body), headers=self._headers)
+        logging.debug(f"Received response from Uri={uri} Response={response.content} Method=POST")
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.ACCEPTED):
             try:

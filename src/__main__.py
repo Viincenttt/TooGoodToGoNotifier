@@ -1,8 +1,10 @@
 from api.client import ApiClient
 
 from config import AppConfiguration
+import logging
 
 def main():
+    logging.basicConfig(level=logging.DEBUG)
     app_config = AppConfiguration()
 
     client = ApiClient()
