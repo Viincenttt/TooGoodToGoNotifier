@@ -4,10 +4,11 @@ class AuthenticateByEmailResponse:
         self.polling_id = polling_id
 
 class AuthenticateByPollingIdResponse:
-    def __init__(self, access_token: str, refresh_token: str, access_token_ttl_seconds: int):
+    def __init__(self, access_token: str, refresh_token: str, access_token_ttl_seconds: int, user_id: int):
         self.access_token = access_token
         self.refresh_token = refresh_token
         self.access_token_ttl_seconds = access_token_ttl_seconds
+        self.user_id = user_id
 
 class RefreshAccessTokenResponse:
     def __init__(self, access_token: str, refresh_token: str, access_token_ttl_seconds: int):

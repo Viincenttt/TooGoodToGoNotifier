@@ -20,6 +20,27 @@ class ApiClient:
             "Content-Type": "application/json; charset=utf8"
         }
 
+    def get_favorites_basket(self, access_token: str, user_id: str):
+        uri = f"{self.BASE_URI}/item/v7/"
+        body = {
+            "user_id": user_id,
+            "origin": {
+                "latitude": 0,
+                "longitude": 0
+            },
+            "radius": 1,
+            "page": 1,
+            "page_size": 100,
+            "favorites_only": True,
+            "with_stock_only": True
+        }
+        headers = {
+            "Authorization": f"Bearer {access_token}"
+        }
+        headers.update(self._headers)
+        response = self._post(uri, body)
+        return response
+
     def authenticate_by_email(self, email: str) -> AuthenticateByEmailResponse:
         uri = f"{self.BASE_URI}/auth/v3/authByEmail"
         body = {
@@ -44,7 +65,8 @@ class ApiClient:
         return AuthenticateByPollingIdResponse(
             response["access_token"], 
             response["refresh_token"],
-            response["access_token_ttl_seconds"]
+            response["access_token_ttl_seconds"],
+            response["startup_data"]["user"]["user_id"]
         )
 
     def refresh_access_token(self, refresh_token: str) -> RefreshAccessTokenResponse:

@@ -14,6 +14,7 @@ class Authenticator:
     CONFIG_AUTH_SECTION_ACCESS_TOKEN = 'AccessToken'
     CONFIG_AUTH_SECTION_REFRESH_TOKEN = 'RefreshToken'
     CONFIG_AUTH_SECTION_ACCESS_TOKEN_VALID_UNTIL = 'AccessTokenValidUntil'
+    CONFIG_AUTH_SECTION_USER_ID = 'UserId'
 
     def __init__(self, client: ApiClient):
         self.client = client
@@ -27,11 +28,10 @@ class Authenticator:
 
         self.access_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN, fallback=None)
         self.refresh_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_REFRESH_TOKEN, fallback=None)
+        self.user_id = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, fallback=None)
         access_token_valid_until = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN_VALID_UNTIL, fallback=None)
         if access_token_valid_until is not None:
             self.access_token_valid_until = datetime.fromisoformat(access_token_valid_until)
-
-        self.__save_authentication_tokens_to_file('access', 'refresh', datetime.now())
 
     def get_access_token(self, email: str):
         if self.access_token is not None:                        
@@ -40,7 +40,8 @@ class Authenticator:
                 self.__set_authentication_tokens(
                     refresh_token_result.access_token, 
                     refresh_token_result.refresh_token, 
-                    refresh_token_result.access_token_ttl_seconds
+                    refresh_token_result.access_token_ttl_seconds,
+                    self.user_id
                 )
 
             return self.access_token        
@@ -49,7 +50,8 @@ class Authenticator:
         self.__set_authentication_tokens(
                     login_result.access_token, 
                     login_result.refresh_token, 
-                    login_result.access_token_ttl_seconds
+                    login_result.access_token_ttl_seconds,
+                    login_result.user_id
         )
 
         return self.access_token
@@ -86,14 +88,15 @@ class Authenticator:
 
         return current_time >= time_to_refresh_access_token
 
-    def __set_authentication_tokens(self, access_token: str, refresh_token: str, access_token_ttl_seconds: int):
+    def __set_authentication_tokens(self, access_token: str, refresh_token: str, access_token_ttl_seconds: int, user_id: int):
         self.access_token = access_token
         self.refresh_token = refresh_token
         self.access_token_valid_until = datetime.now() + timedelta(seconds=access_token_ttl_seconds)
+        self.user_id = user_id
 
-        self.__save_authentication_tokens_to_file(self.access_token, self.refresh_token, self.access_token_valid_until)
+        self.__save_authentication_tokens_to_file(self.access_token, self.refresh_token, self.access_token_valid_until, user_id)
 
-    def __save_authentication_tokens_to_file(self, access_token: str, refresh_token: str, access_token_valid_until: datetime):
+    def __save_authentication_tokens_to_file(self, access_token: str, refresh_token: str, access_token_valid_until: datetime, user_id: int):
         with open(self.CONFIG_FILE_NAME, 'w') as configfile:
             if (self.config.has_section(self.CONFIG_AUTH_SECTION_NAME) == False):
                 self.config.add_section(self.CONFIG_AUTH_SECTION_NAME)
@@ -101,5 +104,6 @@ class Authenticator:
             self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN, access_token)
             self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_REFRESH_TOKEN, refresh_token)
             self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN_VALID_UNTIL, access_token_valid_until.isoformat())
+            self.config.set(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, user_id)
 
             self.config.write(configfile)
