@@ -4,7 +4,7 @@ from typing import Any, Dict
 import requests
 import logging
 
-from api.errors import TooGoodToGoApiError
+from api.errors import TooGoodToGoApiError, TooGoodToGoRateLimitError
 from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse
 
 class ApiClient:
@@ -59,5 +59,8 @@ class ApiClient:
             except ValueError as err:
                 raise TooGoodToGoApiError(response.status_code, response.content)
         
+        if (response.status_code == HTTPStatus.TOO_MANY_REQUESTS):
+            raise TooGoodToGoRateLimitError(response.status_code, response.content)
+
         raise TooGoodToGoApiError(response.status_code, response.content)
 
