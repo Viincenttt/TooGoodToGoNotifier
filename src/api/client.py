@@ -5,7 +5,7 @@ import requests
 import logging
 
 from api.errors import TooGoodToGoApiError, TooGoodToGoRateLimitError
-from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse
+from api.models import AuthenticateByEmailResponse, AuthenticateByPollingIdResponse, RefreshAccessTokenResponse
 
 class ApiClient:
     BASE_URI = "https://apptoogoodtogo.com/api"
@@ -42,6 +42,19 @@ class ApiClient:
 
         response = self._post(uri, body)
         return AuthenticateByPollingIdResponse(
+            response["access_token"], 
+            response["refresh_token"],
+            response["access_token_ttl_seconds"]
+        )
+
+    def refresh_access_token(self, refresh_token: str) -> RefreshAccessTokenResponse:
+        uri = f"{self.BASE_URI}/auth/v3/token/refresh"
+        body = {
+            "refresh_token": refresh_token
+        }
+
+        response = self._post(uri, body)
+        return RefreshAccessTokenResponse(
             response["access_token"], 
             response["refresh_token"],
             response["access_token_ttl_seconds"]

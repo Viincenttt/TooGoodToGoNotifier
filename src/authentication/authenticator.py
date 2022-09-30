@@ -20,10 +20,15 @@ class Authenticator:
         self.access_token_valid_until = None   
 
     def get_access_token(self, email: str):
-        if self.access_token is not None:            
+        if self.access_token is not None:                        
+            if (self.__should_refresh_access_token):
+                refresh_token_result = self.client.refresh_access_token(self.refresh_token)
+                self.access_token = refresh_token_result.access_token
+                self.refresh_token = refresh_token_result.refresh_token
+                self.access_token_valid_until = datetime.now() + timedelta(seconds=refresh_token_result.access_token_ttl_seconds)            
+
             return self.access_token        
 
-        # TODO: Refresh token if access token is expired
         # TODO: Cache access_token in file / settings, so we can load it in app startup
 
         login_result = self.login(email)
@@ -56,3 +61,9 @@ class Authenticator:
             return result
         except TooGoodToGoApiError as err:
             return None    
+
+    def __should_refresh_access_token(self):
+        current_time = datetime.now()
+        time_to_refresh_access_token = self.access_token_valid_until - timedelta(seconds=600)
+
+        return current_time >= time_to_refresh_access_token

@@ -8,3 +8,9 @@ class AuthenticateByPollingIdResponse:
         self.access_token = access_token
         self.refresh_token = refresh_token
         self.access_token_ttl_seconds = access_token_ttl_seconds
+
+class RefreshAccessTokenResponse:
+    def __init__(self, access_token: str, refresh_token: str, access_token_ttl_seconds: int):
+        self.access_token = access_token
+        self.refresh_token = refresh_token
+        self.access_token_ttl_seconds = access_token_ttl_seconds
