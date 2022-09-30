@@ -28,7 +28,11 @@ class Authenticator:
 
         self.access_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN, fallback=None)
         self.refresh_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_REFRESH_TOKEN, fallback=None)
-        self.user_id = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, fallback=None)
+        
+        user_id = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, fallback=None)
+        if user_id is not None:
+            self.user_id = int(user_id)
+
         access_token_valid_until = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN_VALID_UNTIL, fallback=None)
         if access_token_valid_until is not None:
             self.access_token_valid_until = datetime.fromisoformat(access_token_valid_until)
