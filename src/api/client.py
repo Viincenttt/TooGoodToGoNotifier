@@ -97,7 +97,7 @@ class ApiClient:
             response["access_token_ttl_seconds"]
         )
 
-    def _post(self, uri: str, body: dict[str, Any], headers: Dict[str, str] = None) -> Any:
+    def _post(self, uri: str, body, headers = None) -> Any:
         if (headers is not None):
             headers.update(self._headers)
         else:

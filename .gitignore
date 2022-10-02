@@ -1,0 +1,4 @@
+publish
+*.pem
+deploy.sh
+*.tgz
