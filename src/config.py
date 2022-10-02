@@ -9,3 +9,4 @@ class AppConfiguration:
 
         self.email = config['EMAIL']
         self.logging_level = config['LOGGING_LEVEL']
+        self.azure_app_insights_connection_str = config['AZURE_APP_INSIGHTS_CONNECTION_STR']
