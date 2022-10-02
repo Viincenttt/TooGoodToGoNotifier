@@ -31,7 +31,8 @@ class FavoritesScanner:
 
             items = self.client.get_favorites_basket(access_token, user_id)
             for item in items:
-                logging.info(f'Favorite item status: Store={item.display_name} Items Available={item.items_available}')
+                logging.info(f'Favorite item status: Store={item.display_name} Items Available={item.items_available}',
+                    extra={'custom_dimensions': {'store': item.display_name, 'items_available': item.items_available }})
 
                 if self.__is_item_newly_available(item):
                     self.__notify_new_item_available(item)
@@ -53,4 +54,5 @@ class FavoritesScanner:
             return True
 
     def __notify_new_item_available(self, item: GetFavoritesBasketItemResponse) -> None:
-        logging.info(f'New favorite item available in Good To Go - Store={item.display_name} Items Available={item.items_available}')
+        logging.info(f'New favorite item available in Good To Go - Store={item.display_name} Items Available={item.items_available}',
+            extra={'custom_dimensions': {'store_status_changed': True, 'store': item.display_name, 'items_available': item.items_available }})

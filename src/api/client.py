@@ -104,10 +104,13 @@ class ApiClient:
             headers = self._headers
 
         self.session.headers = headers
-        jsonBody = json.dumps(body)
-        logging.debug(f"Sending request to Uri={uri} Body={jsonBody} Method=POST")        
+        logging.debug(f"Sending request to Uri={uri} RequestBody={body} Method=POST",
+            extra={'custom_dimensions': {'uri': uri, 'request_body': body, 'method': 'POST' }})
+
         response = self.session.post(uri, json=body)
-        logging.debug(f"Received response from Uri={uri} Response={response.content} Method=POST")
+
+        logging.debug(f"Received response from Uri={uri} Response={response.content} Method=POST",
+            extra={'custom_dimensions': {'uri': uri, 'response_body': response.content, 'method': 'POST' }})
 
         if response.status_code in (HTTPStatus.OK, HTTPStatus.ACCEPTED):
             try:
