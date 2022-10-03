@@ -5,6 +5,7 @@ from opencensus.ext.azure.log_exporter import AzureLogHandler
 from config import AppConfiguration
 import logging
 from logging.handlers import RotatingFileHandler
+from notification.log import LogNotifier
 
 from scan.favoritesscanner import FavoritesScanner
 
@@ -26,7 +27,12 @@ def main():
     app_config = AppConfiguration()
     initializeLogging(app_config)
     
-    scanner = FavoritesScanner(app_config.email)
+    scanner = FavoritesScanner(
+        email=app_config.email,
+        notifiers=[
+            LogNotifier()
+        ]
+    )
     scanner.scan_continuously()
 
 if __name__ == '__main__':

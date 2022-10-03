@@ -1,3 +1,4 @@
+from typing import Iterable
 from api.client import ApiClient
 import logging
 import random
@@ -7,13 +8,15 @@ import datetime
 import pytz
 
 from authentication.authenticator import Authenticator
+from notification.base import BaseNotification
 
 class FavoritesScanner:
-    def __init__(self, email: str) -> None:
+    def __init__(self, email: str, notifiers: Iterable[BaseNotification]) -> None:
         self.email = email
         self.client = ApiClient()
         self.authenticator = Authenticator(self.client)
         self.previous_favorites_scan_result = {}
+        self.notifiers = notifiers
 
         self.time_between_scanning_in_seconds_from = 60
         self.time_between_scanning_in_seconds_to = 300
@@ -66,5 +69,5 @@ class FavoritesScanner:
             return True
 
     def __notify_new_item_available(self, item: GetFavoritesBasketItemResponse) -> None:
-        logging.info(f'New favorite item available in Good To Go - Store={item.display_name} Items Available={item.items_available}',
-            extra={'custom_dimensions': {'store_status_changed': True, 'store': item.display_name, 'items_available': item.items_available }})
+        for notifier in self.notifiers:
+            notifier.notify(item)
