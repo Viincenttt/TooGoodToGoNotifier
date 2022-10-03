@@ -4,6 +4,7 @@ import random
 import time
 from api.models import GetFavoritesBasketItemResponse
 import datetime
+import pytz
 
 from authentication.authenticator import Authenticator
 
@@ -19,8 +20,7 @@ class FavoritesScanner:
 
     def scan_continuously(self) -> None:
         while (True):
-            now = datetime.datetime.now()
-            if (now.hour >= 7 and now.hour <= 22):
+            if (self.__is_within_time_to_scan()):
                 logging.info('Start scanning favorites')
                 self.scan_favorites()
             else:
@@ -47,6 +47,11 @@ class FavoritesScanner:
                 self.previous_favorites_scan_result[item.item_id] = item.items_available
         except Exception as err:
             logging.exception(err, exc_info=True)
+
+    def __is_within_time_to_scan(self) -> None:
+        ams_timezone = pytz.timezone('Europe/Amsterdam')
+        now = datetime.datetime.now(ams_timezone)
+        return now.hour >= 7 and now.hour <= 22
 
     def __is_item_newly_available(self, item: GetFavoritesBasketItemResponse) -> bool:
         if item.items_available == 0:
