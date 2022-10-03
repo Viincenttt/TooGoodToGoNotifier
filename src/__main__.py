@@ -12,6 +12,8 @@ def initializeLogging(app_config: AppConfiguration) -> None:
     logging_level = getattr(logging, app_config.logging_level.upper(), None)
     
     logging.basicConfig(
+        format='%(asctime)s %(levelname)-8s %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
         level=logging_level,
         handlers=[
             AzureLogHandler(connection_string=app_config.azure_app_insights_connection_str),
