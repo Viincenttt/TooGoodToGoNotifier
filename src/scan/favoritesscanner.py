@@ -70,4 +70,8 @@ class FavoritesScanner:
 
     def __notify_new_item_available(self, item: GetFavoritesBasketItemResponse) -> None:
         for notifier in self.notifiers:
-            notifier.notify(item)
+            # Wrap in try catch, so that if one notification system fails, the next ones are still executed
+            try:
+                notifier.notify(item)
+            except Exception as err:
+                logging.exception(err, exc_info=True)
