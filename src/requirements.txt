@@ -3,3 +3,4 @@ python-dotenv==0.21.0
 requests==2.26.0
 opencensus-ext-azure==1.1.7
 pytz==2022.4
+sendgrid==6.9.7

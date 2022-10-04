@@ -1,11 +1,10 @@
-from api.client import ApiClient
-from authentication.authenticator import Authenticator
 from opencensus.ext.azure.log_exporter import AzureLogHandler
 
 from config import AppConfiguration
 import logging
 from logging.handlers import RotatingFileHandler
 from notification.log import LogNotifier
+from notification.email import SendgridNotifier
 
 from scan.favoritesscanner import FavoritesScanner
 
@@ -30,7 +29,12 @@ def main():
     scanner = FavoritesScanner(
         email=app_config.email,
         notifiers=[
-            LogNotifier()
+            LogNotifier(),
+            SendgridNotifier(
+                api_key=app_config.sendgrid_api_key,
+                from_email=app_config.sendgrid_from_email,
+                to_emails=app_config.sendgrid_to_email
+            )
         ]
     )
     scanner.scan_continuously()
