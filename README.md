@@ -45,7 +45,7 @@ union traces
 #### Sendgrid notifications
 With [SendGrid](https://sendgrid.com/) you can setup e-mail notifications. Whenever one of your favorite stores has new availability, you'll receive an e-mail that specificies which store has availability and how much availability it has. 
 
-### Configuring notifications
+#### Configuring notifications
 By default, both the log notifications and the SendGrid notifications are enabled. In the `src/__main__.py` file you can setup which notifications it should use. 
 ```
 scanner = FavoritesScanner(
