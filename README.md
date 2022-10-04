@@ -47,7 +47,7 @@ With [SendGrid](https://sendgrid.com/) you can setup e-mail notifications. Whene
 
 #### Configuring notifications
 By default, both the log notifications and the SendGrid notifications are enabled. In the `src/__main__.py` file you can setup which notifications it should use. 
-```
+```python
 scanner = FavoritesScanner(
   email=app_config.email,
   notifiers=[
@@ -60,3 +60,25 @@ scanner = FavoritesScanner(
   ]
 )
 ```
+
+#### Adding custom notifiers
+Adding custom notifiers is incredibly easy. Add your own custom notifier to the `notifiers` property of the `FavoritesScanner`. Your own notifier has to extend the abstract `BaseNotification` class. For example:
+
+*customnotification.py:*
+```python
+class CustomNotifier(BaseNotification):
+    def notify(self, item: GetFavoritesBasketItemResponse) -> None:
+        # Your custom notification logic here
+```
+*__main__.py:*
+```python
+scanner = FavoritesScanner(
+  email=app_config.email,
+  notifiers=[
+    CustomNotifier()
+  ]
+)
+```
+
+The `notify` method of your `CustomNotifier` will now be called whenever one of your favorite Too Good To Go stores has new availability!
+
