@@ -30,6 +30,9 @@ SENDGRID_FROM_EMAIL=YOUR_SENDGRID_FROM_EMAIL
 SENDGRID_TO_EMAIL=YOUR_SENDGRID_TO_EMAIL
 ```
 
+### Authentication
+Too Good To Go uses passwordless authentication. That means that whenever you start up TooGoodToGoNotifier for the first time, you'll receive an e-mail from Too Good To Go to verify a new login. Since TooGoodToGoNotifier caches the refresh token, you won't have to authenticate again the next time you start the TooGoodToGoNotifier application. 
+
 ### Notification types
 Two types of notifications are supported: Log notifications and SendGrid notifications. 
 
