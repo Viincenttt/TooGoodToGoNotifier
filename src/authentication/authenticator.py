@@ -39,13 +39,13 @@ class Authenticator:
 
     def get_access_token(self, email: str):
         if self.access_token is not None:                        
-            if (self.__should_refresh_access_token()):
-                self.__refresh_access_token()
+            if (self.refresh_access_token()):
+                self.force_refresh_access_token()
 
             return self.access_token        
 
         if self.refresh_token is not None:
-            self.__refresh_access_token()
+            self.refresh_access_token()
             return self.access_token
 
         login_result = self.__login(email)
@@ -57,6 +57,15 @@ class Authenticator:
         )
 
         return self.access_token
+
+    def refresh_access_token(self):
+        refresh_token_result = self.client.refresh_access_token(self.refresh_token)
+        self.__set_authentication_tokens(
+            refresh_token_result.access_token, 
+            refresh_token_result.refresh_token, 
+            refresh_token_result.access_token_ttl_seconds,
+            self.user_id
+        )
 
     def __login(self, email: str):
         polling_id = self.__get_polling_id(email)
@@ -96,16 +105,7 @@ class Authenticator:
         self.access_token_valid_until = datetime.now() + timedelta(seconds=access_token_ttl_seconds)
         self.user_id = user_id
 
-        self.__save_authentication_tokens_to_file(self.access_token, self.refresh_token, self.access_token_valid_until, user_id)
-
-    def __refresh_access_token(self):
-        refresh_token_result = self.client.refresh_access_token(self.refresh_token)
-        self.__set_authentication_tokens(
-            refresh_token_result.access_token, 
-            refresh_token_result.refresh_token, 
-            refresh_token_result.access_token_ttl_seconds,
-            self.user_id
-        )
+        self.__save_authentication_tokens_to_file(self.access_token, self.refresh_token, self.access_token_valid_until, user_id)    
 
     def __save_authentication_tokens_to_file(self, access_token: str, refresh_token: str, access_token_valid_until: datetime, user_id: int):
         with open(self.CONFIG_FILE_NAME, 'w') as configfile:
