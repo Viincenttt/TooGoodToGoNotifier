@@ -13,3 +13,5 @@ class AppConfiguration:
         self.sendgrid_api_key = config['SENDGRID_API_KEY']
         self.sendgrid_from_email = config['SENDGRID_FROM_EMAIL']
         self.sendgrid_to_email = config['SENDGRID_TO_EMAIL']
+        self.telegram_bot_token = config['TELEGRAM_BOT_TOKEN']
+        self.telegram_chat_id = config['TELEGRAM_CHAT_ID']
