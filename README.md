@@ -28,13 +28,15 @@ AZURE_APP_INSIGHTS_CONNECTION_STR=YOUR_APP_INSIGHTS_CONNECTION_STR
 SENDGRID_API_KEY=YOUR_SENDGRID_API_KEY
 SENDGRID_FROM_EMAIL=YOUR_SENDGRID_FROM_EMAIL
 SENDGRID_TO_EMAIL=YOUR_SENDGRID_TO_EMAIL
+TELEGRAM_BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+TELEGRAM_CHAT_ID=YOUR_TELEGRAM_CHAT_ID
 ```
 
 ### Authentication
 Too Good To Go uses passwordless authentication. That means that whenever you start up TooGoodToGoNotifier for the first time, you'll receive an e-mail from Too Good To Go to verify a new login. Since TooGoodToGoNotifier caches the refresh token, you won't have to authenticate again the next time you start the TooGoodToGoNotifier application. 
 
 ### Notification types
-Two types of notifications are supported: Log notifications and SendGrid notifications. 
+Three types of notifications are supported: Log notifications, SendGrid notifications and Telegram notifications.
 
 #### Log notifications
 Log notifications allow you to log to Application Insights. Inside Application Insights, you can setup alerts and action groups to notify you whenever a store has new available stock. The Application Insights query you could use for the alert is:
@@ -48,20 +50,33 @@ union traces
 #### Sendgrid notifications
 With [SendGrid](https://sendgrid.com/) you can setup e-mail notifications. Whenever one of your favorite stores has new availability, you'll receive an e-mail that specificies which store has availability and how much availability it has. 
 
+#### Telegram notifications
+The TooGoodToGoNotifier can also send Telegram notifications. In order for this to work, you'll have to create a bot token and setup a chat id to which the TooGoodToGoNotifier app will send the messages to. More information can be found [here](https://medium.com/codex/using-python-to-send-telegram-messages-in-3-simple-steps-419a8b5e5e2). Once you have the bot token and chat id, simply add them to the .env file settings.
+
 #### Configuring notifications
-By default, both the log notifications and the SendGrid notifications are enabled. In the `src/__main__.py` file you can setup which notifications it should use. 
+By default, both the log notifications and the Telegram notifications are enabled. In the `src/__main__.py` file you can setup which notifications it should use. 
 ```python
 scanner = FavoritesScanner(
   email=app_config.email,
   notifiers=[
     LogNotifier(),
-    SendgridNotifier(
-      api_key=app_config.sendgrid_api_key,
-      from_email=app_config.sendgrid_from_email,
-      to_emails=app_config.sendgrid_to_email
+    TelegramNotifier(
+        telegram_client=TelegramClient(app_config.telegram_bot_token),
+        chat_id=app_config.telegram_chat_id
     )
   ]
 )
+```
+
+Alternatively, you could setup the SendgridNotifier by simply adding the SendgridNotifier class to the notifiers array:
+```
+notifiers=[
+    SendgridNotifier(
+        api_key=app_config.sendgrid_api_key,
+        from_email=app_config.sendgrid_from_email,
+        to_emails=app_config.sendgrid_to_email
+    )
+]
 ```
 
 #### Adding custom notifiers
