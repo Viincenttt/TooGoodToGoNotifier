@@ -19,8 +19,8 @@ class FavoritesScanner:
         self.previous_favorites_scan_result = {}
         self.notifiers = notifiers
 
-        self.time_between_scanning_in_seconds_from = 60
-        self.time_between_scanning_in_seconds_to = 300
+        self.time_between_scanning_in_seconds_from = 30
+        self.time_between_scanning_in_seconds_to = 120
 
     def scan_continuously(self) -> None:
         while (True):
