@@ -51,8 +51,6 @@ class FavoritesScanner:
                 self.previous_favorites_scan_result[item.item_id] = item.items_available
         except TooGoodToGoApiError as api_err:
             logging.exception(api_err, exc_info=True)
-            if (api_err.args.status_code and api_err.args.status_code == 401):
-                self.authenticator.refresh_access_token()
             
         except Exception as err:
             logging.exception(err, exc_info=True)

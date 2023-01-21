@@ -26,7 +26,7 @@ class Authenticator:
         self.config = configparser.ConfigParser()
         self.config.read(self.CONFIG_FILE_NAME)
 
-        self.access_token = None
+        self.access_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_ACCESS_TOKEN, fallback=None)
         self.refresh_token = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_REFRESH_TOKEN, fallback=None)
         
         user_id = self.config.get(self.CONFIG_AUTH_SECTION_NAME, self.CONFIG_AUTH_SECTION_USER_ID, fallback=None)
@@ -39,13 +39,9 @@ class Authenticator:
 
     def get_access_token(self, email: str):
         if self.access_token is not None:                        
-            if (self.refresh_access_token()):
-                self.force_refresh_access_token()
+            if (self.__should_refresh_access_token()):
+                self.refresh_access_token()
 
-            return self.access_token        
-
-        if self.refresh_token is not None:
-            self.refresh_access_token()
             return self.access_token
 
         login_result = self.__login(email)
