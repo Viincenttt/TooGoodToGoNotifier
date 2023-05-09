@@ -1,4 +1,4 @@
-# To Good To Go Notifier
+# Too Good To Go Notifier
 
 ## Introduction
 
