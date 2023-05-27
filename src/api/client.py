@@ -22,7 +22,7 @@ class ApiClient:
         }
 
     def get_favorites_basket(self, access_token: str, user_id: int) -> List[GetFavoritesBasketItemResponse]:
-        uri = f"{self.BASE_URI}/item/v7/"
+        uri = f"{self.BASE_URI}/item/v8/"
         body = {
             "user_id": user_id,
             "origin": {"longitude": 0.0, "latitude": 0.0},
