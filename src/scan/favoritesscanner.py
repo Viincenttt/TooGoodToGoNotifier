@@ -51,6 +51,9 @@ class FavoritesScanner:
                 self.previous_favorites_scan_result[item.item_id] = item.items_available
         except TooGoodToGoApiError as api_err:
             logging.exception(api_err, exc_info=True)
+            if api_err.status_code == 401:                
+                logging.warning("401 status code retrieved, refreshing access token")
+                self.__refresh_token()
             
         except Exception as err:
             logging.exception(err, exc_info=True)
@@ -79,3 +82,9 @@ class FavoritesScanner:
                 notifier.notify(item)
             except Exception as err:
                 logging.exception(err, exc_info=True)
+
+    def __refresh_token(self) -> None:
+        try:
+            self.authenticator.refresh_access_token()
+        except Exception as err:
+            logging.exception("Error while refreshing token", err, exc_info=True)
