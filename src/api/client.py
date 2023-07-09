@@ -16,8 +16,10 @@ class ApiClient:
         self.session = requests.Session()
 
         self._headers = {
-            "user-agent": "TGTG/22.9.10 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N",
+            "user-agent": "TGTG/23.6.11 Dalvik/2.1.0 (Linux; U; Android 9; AFTKA Build/PS7285.2877N",
             "accept-language": "en-UK",
+            "accept": "application/json",
+            "content-type": "application/json; charset=utf-8",
             "Accept-Encoding": "gzip"
         }
 
