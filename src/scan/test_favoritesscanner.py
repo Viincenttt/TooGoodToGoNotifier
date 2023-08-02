@@ -8,7 +8,7 @@ class TestFavoritesScanner(unittest.TestCase):
     def test_no_items_available(self):
         # Arrange
         email = 'test@email.com'
-        scanner = FavoritesScanner(email)        
+        scanner = FavoritesScanner(email, [])        
 
         scanner.authenticator = self.__create_authenticator_mock()
         scanner.client = self.__create_api_client_mock(0)
@@ -31,7 +31,7 @@ class TestFavoritesScanner(unittest.TestCase):
         # Arrange
         email = 'test@email.com'
         available_items = 1
-        scanner = FavoritesScanner(email)        
+        scanner = FavoritesScanner(email, [])
 
         scanner.authenticator = self.__create_authenticator_mock()
         scanner.client = self.__create_api_client_mock(available_items)

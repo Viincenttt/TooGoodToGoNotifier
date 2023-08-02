@@ -76,6 +76,8 @@ class FavoritesScanner:
             return True
 
     def __notify_new_item_available(self, item: GetFavoritesBasketItemResponse) -> None:
+        logging.info(f'New favorite item available in Good To Go - Store={item.display_name} Items Available={item.items_available}')
+
         for notifier in self.notifiers:
             # Wrap in try catch, so that if one notification system fails, the next ones are still executed
             try:
