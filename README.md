@@ -12,13 +12,6 @@ This project is in no way affiliated with Too Good To Go. Use TooGoodToGoNotifie
 The official Too Good To Go app does not have store specific notifications when surplus food is available. This means that users continually have to refresh the app so they don't miss any availability from their favorite stores. The TooGoodToGoNotifier solves this problem by sending you notifications whenever one of your favorites stores has new availability. This way you'll never miss another bag of food from your favorite store again!
 
 ## How to use
-### Installing requirements
-The requirements are listed in the `src/requirements.txt` file. To install them, simply run:
-```
-cd src
-pip install -r requirements.txt
-```
-
 ### Enter your settings
 Enter your settings in the `src/.env` file:
 ```
@@ -32,7 +25,33 @@ TELEGRAM_BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
 TELEGRAM_CHAT_ID=YOUR_TELEGRAM_CHAT_ID
 ```
 
-### Authentication
+### With Docker
+Build the image:
+```
+docker build -t toogoodtogo-notifier .
+```
+
+Enter your settings in the `/src/.env` file and run the following command:
+```
+docker run --env-file src/.env toogoodtogo-notifier
+```
+
+### Without Docker
+#### Installing requirements
+The requirements are listed in the `src/requirements.txt` file. To install them, simply run:
+```
+pip install -r requirements.txt
+cd src
+python __main__.py
+```
+
+### Successful start-up
+A successful startup will show the following output:
+```
+2023-08-04 10:02:07 INFO     Start scanning favorites
+2023-08-04 10:02:07 INFO     Authentication not available yet, trying again in 17 seconds
+```
+
 Too Good To Go uses passwordless authentication. That means that whenever you start up TooGoodToGoNotifier for the first time, you'll receive an e-mail from Too Good To Go to verify a new login. Since TooGoodToGoNotifier caches the refresh token, you won't have to authenticate again the next time you start the TooGoodToGoNotifier application. 
 
 ### Notification types
