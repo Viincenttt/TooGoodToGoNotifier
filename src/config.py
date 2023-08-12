@@ -4,7 +4,7 @@ from os.path import join, dirname
 
 class AppConfiguration:
     def __init__(self):
-        load_dotenv(join(dirname(__file__), '.env'))
+        load_dotenv(join(dirname(__file__), '.env'), override=True)
         load_dotenv(join(dirname(__file__), '.development.env'), override=True)
 
         self.email = os.environ.get('EMAIL')

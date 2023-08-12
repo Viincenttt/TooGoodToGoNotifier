@@ -19,5 +19,5 @@ coverage.xml
 .pytest_cache
 .hypothesis
 authentication_cache.ini
-*.env
+**.env
 .gitignore
